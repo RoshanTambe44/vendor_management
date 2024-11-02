@@ -37,11 +37,7 @@ const criticalityData = [
   { name: 'Critical', value: 1 },
 ]
 
-const statusData = [
-  { name: 'Active', value: 3 },
-  { name: 'Inactive', value: 1 },
-  { name: 'Pending', value: 1 },
-]
+
 
 
 
