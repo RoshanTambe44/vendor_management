@@ -15,7 +15,7 @@ const vendorSchema = new mongoose.Schema({
     status : {
        type : String
     },
-    email : {
+    contact : {
         type: String,
     },
     serviceProvided:{

@@ -24,24 +24,24 @@ import axios from 'axios'
 //   { id: 5, name: "SecureNet", type: "Service Provider", criticality: "High", status: "Pending", contact: "alex@securenet.com", serviceProvided: "Cybersecurity" },
 // ]
 
-const vendorTypeData = [
-  { name: 'Supplier', value: 2 },
-  { name: 'Service Provider', value: 2 },
-  { name: 'Logistics', value: 1 },
-]
+// const vendorTypeData = [
+//   { name: 'Supplier', value: 2 },
+//   { name: 'Service Provider', value: 2 },
+//   { name: 'Logistics', value: 1 },
+// ]
 
-const criticalityData = [
-  { name: 'Low', value: 1 },
-  { name: 'Medium', value: 1 },
-  { name: 'High', value: 2 },
-  { name: 'Critical', value: 1 },
-]
-
-
+// const criticalityData = [
+//   { name: 'Low', value: 1 },
+//   { name: 'Medium', value: 1 },
+//   { name: 'High', value: 2 },
+//   { name: 'Critical', value: 1 },
+// ]
 
 
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
+
+
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
 export default function EnhancedVendorDashboard() {
   const [isDarkTheme, setIsDarkTheme] = useState(false)
@@ -50,6 +50,8 @@ export default function EnhancedVendorDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1);
+  const vendorsPerPage = 5;
   const router = useRouter()
 
   interface vendor{
@@ -58,7 +60,7 @@ export default function EnhancedVendorDashboard() {
     status: string,
     criticality: string,
     serviceProvided: string,
-    email: string,
+    contact: string,
     type: string
   }
   
@@ -94,15 +96,254 @@ export default function EnhancedVendorDashboard() {
           (vendor) =>
             vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             vendor.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            vendor.email.toLowerCase().includes(searchTerm.toLowerCase())
+            vendor.contact.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     }
   }, [searchTerm, vendors]);
 
+  // Pagination logic
+  const indexOfLastVendor = currentPage * vendorsPerPage;
+  const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
+  const currentVendors = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
+  const totalPages = Math.ceil(filteredVendors.length / vendorsPerPage);
 
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
 
-  if (loading) return <div className={`h-[100vh] p-4 animate-pulse `}>Loading...</div> 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  if (loading) return  <div className={`min-h-screen ${isDarkTheme ? 'dark' : ''}`}>
+  <div className="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <div className="flex">
+      {/* Sidebar */}
+      <aside className="bg-white dark:bg-gray-800 w-64 min-h-screen p-4">
+        <nav className="space-y-2">
+          <Button variant="ghost" className="w-full justify-start animate-pulse">
+            <Home className="mr-2 h-4 w-4" />
+            Dashboard
+          </Button>
+          <Button variant="ghost" className=" animate-pulse w-full justify-start" onClick={()=>{router.push('/list-addvender')}}>
+            <Users className="mr-2 h-4 w-4" />
+            Vendors
+          </Button>
+          <Button variant="ghost" className="w-full animate-pulse justify-start">
+            <FileText className="mr-2 h-4 w-4" />
+            Reports
+          </Button>
+          <Button variant="ghost" className="w-full animate-pulse justify-start">
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </Button>
+        </nav>
+        <div className="absolute bottom-4">
+          <Button variant="ghost" className="w-full animate-pulse justify-start text-red-600 dark:text-red-400">
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1 p-8">
+        <div className="flex justify-between items-center mb-8 animate-pulse">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Vendor Dashboard</h1>
+          <div className="flex items-center space-x-2">
+            <Sun className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            <Switch checked={isDarkTheme} onCheckedChange={toggleTheme} />
+            <Moon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+          </div>
+        </div>
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-blue-50 dark:bg-blue-900 animate-pulse ">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-blue-800 dark:text-blue-100">Total Vendors</CardTitle>
+              <Users className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+            </CardHeader> 
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-900 dark:text-blue-50">0</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-green-50 dark:bg-green-900 animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-green-800 dark:text-green-100">Active Vendors</CardTitle>
+              <Users className="h-4 w-4 text-green-600 dark:text-green-300" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-900 dark:text-green-50">0</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-red-50 dark:bg-red-900 animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-red-800 dark:text-red-100">Critical Vendors</CardTitle>
+              <Users className="h-4 w-4 text-red-600 dark:text-red-300" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-900 dark:text-red-50">0</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-yellow-50 dark:bg-yellow-900 animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-yellow-800 dark:text-yellow-100">Pending Vendors</CardTitle>
+              <Users className="h-4 w-4 text-yellow-600 dark:text-yellow-300" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-yellow-900 dark:text-yellow-50">0</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Charts */}
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Vendor Types</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={{}} className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={vendorTypeData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      
+                        <Cell  />
+                     
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Vendor Criticality</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={{}} className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <ChartTooltip  />
+                    <Legend />
+                    <Bar dataKey="value" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div> */}
+
+        {/* Vendor Table */}
+        <Card  className='animate-pulse'>
+          <CardHeader>
+            <CardTitle>Recent Vendors</CardTitle>
+            <CardDescription>A list of recent vendors added to your account.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <Label htmlFor="search" className="text-gray-700 dark:text-gray-300">Search Vendors</Label>
+              <div className="flex mt-1">
+                <Input
+                  id="search"
+                  type="text"
+                  placeholder="Search by name, type, or service"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="flex-grow bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  
+                />
+                <Button className="ml-2 bg-blue-700 hover:bg-blue-800 text-white">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div >
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Name</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Type</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Criticality</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Status</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Contact</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Service Provided</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                 
+                    <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <TableCell className="font-medium text-gray-900 dark:text-gray-100"></TableCell>
+                      <TableCell className="text-gray-700 dark:text-gray-300"></TableCell>
+                      <TableCell>
+                        <Badge  >
+                          
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge >
+                          
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-700 dark:text-gray-300"></TableCell>
+                      <TableCell className="text-gray-700 dark:text-gray-300"></TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-100 dark:hover:bg-blue-800"
+                               
+                              >
+                                <Info className="h-4 w-4 mr-1" />
+                                Details
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>View vendor details</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                    </TableRow>
+                </TableBody>
+              </Table>
+              <div className="flex justify-between items-center mt-4">
+                <Button >
+                  Previous
+                </Button>
+                <span className="text-gray-500 dark:text-gray-300">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  </div>
+</div> 
   if (error) return <p>{error}</p>;
 
   const getCriticalityColor = (criticality: string) => {
@@ -140,19 +381,19 @@ export default function EnhancedVendorDashboard() {
           {/* Sidebar */}
           <aside className="bg-white dark:bg-gray-800 w-64 min-h-screen p-4">
             <nav className="space-y-2">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start dark:text-gray-100">
                 <Home className="mr-2 h-4 w-4" />
                 Dashboard
               </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={()=>{router.push('/list-addvender')}}>
+              <Button variant="ghost" className="w-full justify-start dark:text-gray-100" onClick={()=>{router.push('/list-addvender')}}>
                 <Users className="mr-2 h-4 w-4" />
                 Vendors
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start dark:text-gray-100">
                 <FileText className="mr-2 h-4 w-4" />
                 Reports
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start dark:text-gray-100">
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Button>
@@ -217,7 +458,7 @@ export default function EnhancedVendorDashboard() {
             </div>
 
             {/* Charts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <Card>
                 <CardHeader>
                   <CardTitle>Vendor Types</CardTitle>
@@ -265,7 +506,7 @@ export default function EnhancedVendorDashboard() {
                   </ChartContainer>
                 </CardContent>
               </Card>
-            </div>
+            </div> */}
 
             {/* Vendor Table */}
             <Card>
@@ -304,21 +545,21 @@ export default function EnhancedVendorDashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredVendors.map((vendor, index) => (
+                      {currentVendors.map((vendor, index) => (
                         <TableRow key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                           <TableCell className="font-medium text-gray-900 dark:text-gray-100">{vendor.name}</TableCell>
                           <TableCell className="text-gray-700 dark:text-gray-300">{vendor.type}</TableCell>
                           <TableCell>
-                            <Badge  className={`${getCriticalityColor(vendor.criticality)}`}>
+                            <Badge  className={`${getCriticalityColor(vendor.criticality)}  hover:bg-gray-200 cursor-pointer`}>
                               {vendor.criticality}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge className={`${getStatusColor(vendor.status)}`}>
+                            <Badge className={`${getStatusColor(vendor.status)}  hover:bg-gray-200 cursor-pointer`}>
                               {vendor.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-gray-700 dark:text-gray-300">{vendor.email}</TableCell>
+                          <TableCell className="text-gray-700 dark:text-gray-300">{vendor.contact}</TableCell>
                           <TableCell className="text-gray-700 dark:text-gray-300">{vendor.serviceProvided}</TableCell>
                           <TableCell>
                             <TooltipProvider>
@@ -344,6 +585,17 @@ export default function EnhancedVendorDashboard() {
                       ))}
                     </TableBody>
                   </Table>
+                  <div className="flex justify-between items-center mt-4 cursor-pointer">
+                <Button onClick={handlePrevPage} disabled={currentPage === 1}>
+                  Previous
+                </Button>
+                <span className="text-gray-500 dark:text-gray-300">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                  Next
+                </Button>
+              </div>
                 </div>
               </CardContent>
             </Card>

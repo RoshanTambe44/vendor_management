@@ -34,15 +34,29 @@ type VendorFormData = z.infer<typeof vendorSchema>;
 export default function VendorForm() {
   const [isDarkTheme, setIsDarkTheme] = useState(false)
   const router = useRouter()
-  const { register, handleSubmit, control, formState: { errors } } = useForm<VendorFormData>({
-    resolver: zodResolver(vendorSchema),
-  });
+  const { register, handleSubmit, control,reset, formState: { errors } } = useForm<VendorFormData>({
+    resolver: zodResolver(vendorSchema),});
 
   const onSubmit = async(data: VendorFormData) => {
    
-      const result = await axios.post("/api/vendor/addvendor",{name:data.name, serviceProvided:data.serviceProvided, type:data.type , criticality:data.criticality, status: data.status, email: data.contact })
-      toast.success("Vendor Added")
-    console.log("Vendor Data Submitted:", data , "add into db:", result);
+    try {
+      const result = await axios.post("/api/vendor/addvendor", {
+        name: data.name,
+        serviceProvided: data.serviceProvided,
+        type: data.type,
+        criticality: data.criticality,
+        status: data.status,
+        email: data.contact
+      });
+      toast.success("Vendor Added");
+      console.log("Vendor Data Submitted:", data, "add into db:", result);
+
+      // Clear the form fields after successful submission
+      reset();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to add vendor. Please try again.");
+    }
     
     
     
@@ -58,6 +72,7 @@ export default function VendorForm() {
 
   return (
     <div className={`${isDarkTheme ? 'dark' : ''}` }>
+      <div className="dark:bg-slate-700 ">
       <Card className="w-full max-w-lg mx-auto bg-white dark:bg-gray-800 shadow-lg p-6" >
       <CardHeader>
         <CardTitle className="text-xl flex items-center justify-between font-bold text-gray-900 dark:text-gray-100">Add New Vendor <div className="flex items-center space-x-2">
@@ -178,6 +193,8 @@ export default function VendorForm() {
       </CardContent>
     </Card>
     <ToastContainer/>
+    </div>
+    
     </div>
     
   );
