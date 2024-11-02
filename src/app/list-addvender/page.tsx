@@ -15,13 +15,24 @@ import { useRouter } from "next/navigation";
 export default function VendorListView() {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [vendors, setVendors] = useState([]); // Full list of vendors
-  const [filteredVendors, setFilteredVendors] = useState([]); // List for search results
+  const [vendors, setVendors] = useState<vendor []>([]); // Full list of vendors
+  const [filteredVendors, setFilteredVendors] = useState<vendor []>([]); // List for search results
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const router = useRouter();
 
+  
+  interface vendor{
+    name: string, 
+    id: number,
+    status: string,
+    criticality: string,
+    serviceProvided: string,
+    email: string,
+    type: string
+  }
+  
 
   useEffect(() => {
     const fetchVendors = async () => {

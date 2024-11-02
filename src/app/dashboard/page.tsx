@@ -49,13 +49,22 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
 export default function EnhancedVendorDashboard() {
   const [isDarkTheme, setIsDarkTheme] = useState(false)
-  const [vendors, setVendors] = useState([]); // Full list of vendors
-  const [filteredVendors, setFilteredVendors] = useState([]); // List for search results
+  const [vendors, setVendors] = useState<vendor []>([]); // Full list of vendors
+  const [filteredVendors, setFilteredVendors] = useState<vendor []>([]); // List for search results
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('')
   const router = useRouter()
 
+  interface vendor{
+    name: string, 
+    id: number,
+    status: string,
+    criticality: string,
+    serviceProvided: string,
+    email: string,
+    type: string
+  }
   
   useEffect(() => {
     const fetchVendors = async () => {
@@ -309,7 +318,7 @@ export default function EnhancedVendorDashboard() {
                               {vendor.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-gray-700 dark:text-gray-300">{vendor.contact}</TableCell>
+                          <TableCell className="text-gray-700 dark:text-gray-300">{vendor.email}</TableCell>
                           <TableCell className="text-gray-700 dark:text-gray-300">{vendor.serviceProvided}</TableCell>
                           <TableCell>
                             <TooltipProvider>
