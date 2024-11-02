@@ -48,7 +48,7 @@ export default function EnhancedVendorDashboard() {
   const [vendors, setVendors] = useState<vendor []>([]); 
   const [filteredVendors, setFilteredVendors] = useState<vendor []>([]); 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('')
   const router = useRouter()
 
