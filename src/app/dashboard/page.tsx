@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { Moon, Sun, Search, Home, Users, FileText, Settings, LogOut, Info } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
