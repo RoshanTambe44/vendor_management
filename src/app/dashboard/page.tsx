@@ -16,13 +16,13 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 
 // Mock data for demonstration
-const vendors = [
-  { id: 1, name: "Acme Corp", type: "Supplier", criticality: "High", status: "Active", contact: "john@acme.com", serviceProvided: "Raw Materials" },
-  { id: 2, name: "TechPro Solutions", type: "Service Provider", criticality: "Medium", status: "Active", contact: "sarah@techpro.com", serviceProvided: "IT Support" },
-  { id: 3, name: "Global Logistics", type: "Logistics", criticality: "Critical", status: "Active", contact: "mike@globallogistics.com", serviceProvided: "Shipping" },
-  { id: 4, name: "EcoPackage", type: "Supplier", criticality: "Low", status: "Inactive", contact: "lisa@ecopackage.com", serviceProvided: "Packaging Materials" },
-  { id: 5, name: "SecureNet", type: "Service Provider", criticality: "High", status: "Pending", contact: "alex@securenet.com", serviceProvided: "Cybersecurity" },
-]
+// const vendors = [
+//   { id: 1, name: "Acme Corp", type: "Supplier", criticality: "High", status: "Active", contact: "john@acme.com", serviceProvided: "Raw Materials" },
+//   { id: 2, name: "TechPro Solutions", type: "Service Provider", criticality: "Medium", status: "Active", contact: "sarah@techpro.com", serviceProvided: "IT Support" },
+//   { id: 3, name: "Global Logistics", type: "Logistics", criticality: "Critical", status: "Active", contact: "mike@globallogistics.com", serviceProvided: "Shipping" },
+//   { id: 4, name: "EcoPackage", type: "Supplier", criticality: "Low", status: "Inactive", contact: "lisa@ecopackage.com", serviceProvided: "Packaging Materials" },
+//   { id: 5, name: "SecureNet", type: "Service Provider", criticality: "High", status: "Pending", contact: "alex@securenet.com", serviceProvided: "Cybersecurity" },
+// ]
 
 const vendorTypeData = [
   { name: 'Supplier', value: 2 },
@@ -49,10 +49,10 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
 export default function EnhancedVendorDashboard() {
   const [isDarkTheme, setIsDarkTheme] = useState(false)
-  const [vendors, setVendors] = useState<vendor []>([]); // Full list of vendors
-  const [filteredVendors, setFilteredVendors] = useState<vendor []>([]); // List for search results
-  const [error, setError] = useState(null);
+  const [vendors, setVendors] = useState<vendor []>([]); 
+  const [filteredVendors, setFilteredVendors] = useState<vendor []>([]); 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('')
   const router = useRouter()
 
@@ -104,6 +104,10 @@ export default function EnhancedVendorDashboard() {
     }
   }, [searchTerm, vendors]);
 
+
+
+  if (loading) return <div className={`h-[100vh] p-4 animate-pulse `}>Loading...</div> 
+  if (error) return <p>{error}</p>;
 
   const getCriticalityColor = (criticality: string) => {
     switch (criticality.toLowerCase()) {
