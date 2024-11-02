@@ -7,7 +7,7 @@ export default async function Connect() {
  
 
     try {
-      const db = await mongoose.connect("mongodb+srv://roshantambe130:IqFXueAPN4ZXLKUh@cluster0.n0yvx9s.mongodb.net/vendor?retryWrites=true&w=majority&appName=Cluster0")
+      await mongoose.connect("mongodb+srv://roshantambe130:IqFXueAPN4ZXLKUh@cluster0.n0yvx9s.mongodb.net/vendor?retryWrites=true&w=majority&appName=Cluster0")
       
         
         console.log("conection success")
