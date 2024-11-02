@@ -18,7 +18,7 @@ export default function VendorListView() {
   const [vendors, setVendors] = useState<vendor []>([]); // Full list of vendors
   const [filteredVendors, setFilteredVendors] = useState<vendor []>([]); // List for search results
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
